@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Mini-SIEM SOC</title><link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="layout">
+<aside>
+  <div class="brand"><div class="logo">S</div><div><b>Mini-SIEM</b><small>Security Operations</small></div></div>
+  <nav>
+    <button class="nav active" data-page="overview">◈ <span>Overview</span></button>
+    <button class="nav" data-page="incidents">! <span>Incidents <i id="incCount">0</i></span></button>
+    <button class="nav" data-page="alerts">⌁ <span>Alerts <i id="alertCount">0</i></span></button>
+    <button class="nav" data-page="attack">◎ <span>Attack Chain</span></button>
+    <button class="nav" data-page="performance">◫ <span>Performance</span></button>
+  </nav>
+  <div class="sidebottom"><span class="online"></span> Detection engine online<button id="analyze">↻ Analyze logs</button><small>Integrated Python backend</small></div>
+</aside>
+<main>
+<header><div><label>SECURITY OPERATIONS CENTER</label><h1 id="title">Security Overview</h1></div><div class="right"><span class="live"><em></em> LIVE</span><span id="status">Connected</span><div class="avatar">SM</div></div></header>
+
+<section id="overview" class="page active">
+  <div class="hero"><div><label>CORRELATED SECURITY TELEMETRY</label><h2>Detect. Correlate. Respond.</h2><p>Live data from the Mini-SIEM Python detection engine.</p></div><div class="threat"><small>THREAT LEVEL</small><strong id="threat">—</strong></div></div>
+  <div class="metrics"><div class="metric"><span>Events</span><b id="events">—</b><small>parsed from logs</small></div><div class="metric red"><span>Incidents</span><b id="incidents">—</b><small>correlated attack chains</small></div><div class="metric orange"><span>Alerts</span><b id="alerts">—</b><small>detection rule matches</small></div><div class="metric green"><span>Analysis</span><b id="time">—</b><small id="workers">— workers</small></div></div>
+  <div class="cols"><div class="card"><div class="head"><div><h3>Incident Severity</h3><small>Current correlated incidents</small></div></div><div id="severity" class="bars"></div></div><div class="card"><div class="head"><div><h3>Telemetry Sources</h3><small>Detection contribution</small></div></div><div id="sources"></div></div></div>
+  <div class="card"><div class="head"><div><h3>Priority Incidents</h3><small>Click an incident for evidence</small></div></div><div class="tablewrap"><table><thead><tr><th>ID</th><th>Severity</th><th>Source IP</th><th>Kill Chain</th><th>Score</th></tr></thead><tbody id="priority"></tbody></table></div></div>
+</section>
+
+<section id="incidentsPage" class="page"><div class="section"><div><h2>Security Incidents</h2><p>Correlated activity from the real report.</p></div><select id="filter"><option>ALL</option><option>CRITICAL</option><option>HIGH</option><option>MEDIUM</option><option>LOW</option></select></div><div id="incidentCards"></div></section>
+<section id="alertsPage" class="page"><div class="section"><div><h2>Detection Alerts</h2><p>Individual rule matches from the engine.</p></div></div><div class="card"><div class="tablewrap"><table><thead><tr><th>Time</th><th>MITRE</th><th>Detection</th><th>Stage</th><th>Count</th><th>IP</th></tr></thead><tbody id="alertTable"></tbody></table></div></div></section>
+<section id="attackPage" class="page"><div class="section"><div><h2>Attack Chain</h2><p>MITRE-aligned stages detected in the current report.</p></div></div><div class="card"><div id="chain" class="chain"></div></div><div class="cols"><div class="card"><h3>MITRE ATT&CK</h3><div id="mitre"></div></div><div class="card"><h3>Attackers</h3><div id="attackers"></div></div></div></section>
+<section id="performancePage" class="page"><div class="section"><div><h2>Engine Performance</h2><p>Timing returned by the Python analysis engine.</p></div></div><div class="cols"><div class="card"><h3>Pipeline Timing</h3><div id="timing"></div></div><div class="card"><h3>Runtime Summary</h3><div id="summary"></div></div></div></section>
+</main></div>
+<div id="modal" class="modal"><div class="modalbox"><button id="close">×</button><div id="detail"></div></div></div>
+<script src="app.js"></script>
+</body></html>

@@ -1,0 +1,273 @@
+{
+  "events": 20165,
+  "malformed": 0,
+  "workers": 3,
+  "timings": {
+    "parse": 0.24172531399995023,
+    "merge": 0.0203695529999095,
+    "shard": 0.011748129000125118,
+    "detect": 0.16600306299983458,
+    "total": 0.4445167199999105
+  },
+  "incidents": [
+    {
+      "id": "INC-001",
+      "ip": "203.0.113.50",
+      "start": 1791208400.0,
+      "end": 1791209075.0,
+      "score": 100,
+      "severity": "CRITICAL",
+      "stages": [
+        "Reconnaissance",
+        "Initial Access",
+        "Credential Access",
+        "Privilege Escalation",
+        "Persistence",
+        "Exfiltration"
+      ],
+      "sources": [
+        "app",
+        "auth",
+        "firewall"
+      ],
+      "users": [
+        "admin"
+      ],
+      "hosts": [
+        "app01",
+        "fw01",
+        "web01"
+      ],
+      "alerts": [
+        {
+          "rule": "port_scan",
+          "title": "Port scan (firewall drops across many ports)",
+          "stage": "Reconnaissance",
+          "mitre": "T1046",
+          "score": 35,
+          "ip": "203.0.113.50",
+          "user": null,
+          "host": "fw01",
+          "start": 1791208400.0,
+          "end": 1791208429.0,
+          "count": 60,
+          "sources": [
+            "firewall"
+          ],
+          "evidence": [
+            "2026-10-05T13:53:20 fw01 DROP SRC=203.0.113.50 DST=10.0.9.5 PROTO=TCP DPT=1000",
+            "2026-10-05T13:53:20 fw01 DROP SRC=203.0.113.50 DST=10.0.9.5 PROTO=TCP DPT=1007",
+            "2026-10-05T13:53:21 fw01 DROP SRC=203.0.113.50 DST=10.0.9.5 PROTO=TCP DPT=1014"
+          ]
+        },
+        {
+          "rule": "bruteforce",
+          "title": "Brute-force login attempts",
+          "stage": "Credential Access",
+          "mitre": "T1110.001",
+          "score": 60,
+          "ip": "203.0.113.50",
+          "user": null,
+          "host": "web01",
+          "start": 1791208700.0,
+          "end": 1791208758.0,
+          "count": 40,
+          "sources": [
+            "auth"
+          ],
+          "evidence": [
+            "2026-10-05T13:58:20 web01 sshd[3100]: Failed password for invalid user root from 203.0.113.50 port 40000 ssh2",
+            "2026-10-05T13:58:21 web01 sshd[3100]: Failed password for invalid user root from 203.0.113.50 port 40001 ssh2",
+            "2026-10-05T13:58:23 web01 sshd[3100]: Failed password for invalid user admin from 203.0.113.50 port 40002 ssh2"
+          ]
+        },
+        {
+          "rule": "compromise",
+          "title": "Successful login after credential attack",
+          "stage": "Initial Access",
+          "mitre": "T1078",
+          "score": 85,
+          "ip": "203.0.113.50",
+          "user": "admin",
+          "host": "web01",
+          "start": 1791208775.0,
+          "end": 1791208775.0,
+          "count": 1,
+          "sources": [
+            "auth"
+          ],
+          "evidence": [
+            "2026-10-05T13:59:35 web01 sshd[3101]: Accepted password for admin from 203.0.113.50 port 41111 ssh2",
+            "2026-10-05T13:58:20 web01 sshd[3100]: Failed password for invalid user root from 203.0.113.50 port 40000 ssh2",
+            "2026-10-05T13:58:21 web01 sshd[3100]: Failed password for invalid user root from 203.0.113.50 port 40001 ssh2"
+          ]
+        },
+        {
+          "rule": "post_compromise_priv",
+          "title": "Privilege escalation after compromise",
+          "stage": "Privilege Escalation",
+          "mitre": "T1548",
+          "score": 80,
+          "ip": "203.0.113.50",
+          "user": "admin",
+          "host": "web01",
+          "start": 1791208815.0,
+          "end": 1791208815.0,
+          "count": 1,
+          "sources": [
+            "auth"
+          ],
+          "evidence": [
+            "2026-10-05T14:00:15 web01 sudo: admin : TTY=pts/1 ; PWD=/home/admin ; USER=root ; COMMAND=/bin/bash"
+          ]
+        },
+        {
+          "rule": "post_compromise_persist",
+          "title": "Persistence: account created after compromise",
+          "stage": "Persistence",
+          "mitre": "T1136",
+          "score": 80,
+          "ip": "203.0.113.50",
+          "user": "admin",
+          "host": "web01",
+          "start": 1791208865.0,
+          "end": 1791208865.0,
+          "count": 1,
+          "sources": [
+            "auth"
+          ],
+          "evidence": [
+            "2026-10-05T14:01:05 web01 useradd[3300]: new user: name=svc_backup, UID=1099, by=admin"
+          ]
+        },
+        {
+          "rule": "exfil",
+          "title": "Large data download after compromise",
+          "stage": "Exfiltration",
+          "mitre": "T1041",
+          "score": 90,
+          "ip": "203.0.113.50",
+          "user": "admin",
+          "host": "app01",
+          "start": 1791208975.0,
+          "end": 1791209075.0,
+          "count": 6,
+          "sources": [
+            "app"
+          ],
+          "evidence": [
+            "{\"ts\": \"2026-10-05T14:02:55\", \"host\": \"app01\", \"event\": \"file_download\", \"user\": \"admin\", \"ip\": \"203.0.113.50\", \"bytes\": 25000000, \"resource\": \"customers_0.csv\"}",
+            "{\"ts\": \"2026-10-05T14:03:15\", \"host\": \"app01\", \"event\": \"file_download\", \"user\": \"admin\", \"ip\": \"203.0.113.50\", \"bytes\": 25000000, \"resource\": \"customers_1.csv\"}",
+            "{\"ts\": \"2026-10-05T14:03:35\", \"host\": \"app01\", \"event\": \"file_download\", \"user\": \"admin\", \"ip\": \"203.0.113.50\", \"bytes\": 25000000, \"resource\": \"customers_2.csv\"}"
+          ]
+        }
+      ],
+      "summary": "203.0.113.50 progressed through Reconnaissance -> Initial Access -> Credential Access -> Privilege Escalation -> Persistence -> Exfiltration across 3 log source(s): app, auth, firewall."
+    },
+    {
+      "id": "INC-002",
+      "ip": "198.51.100.7",
+      "start": 1791178400.0,
+      "end": 1791178574.0,
+      "score": 60,
+      "severity": "MEDIUM",
+      "stages": [
+        "Credential Access"
+      ],
+      "sources": [
+        "auth"
+      ],
+      "users": [],
+      "hosts": [
+        "db01"
+      ],
+      "alerts": [
+        {
+          "rule": "bruteforce",
+          "title": "Brute-force login attempts",
+          "stage": "Credential Access",
+          "mitre": "T1110.001",
+          "score": 60,
+          "ip": "198.51.100.7",
+          "user": null,
+          "host": "db01",
+          "start": 1791178400.0,
+          "end": 1791178574.0,
+          "count": 30,
+          "sources": [
+            "auth"
+          ],
+          "evidence": [
+            "2026-10-05T05:33:20 db01 sshd[4000]: Failed password for alice from 198.51.100.7 port 50000 ssh2",
+            "2026-10-05T05:33:26 db01 sshd[4000]: Failed password for bob from 198.51.100.7 port 50001 ssh2",
+            "2026-10-05T05:33:32 db01 sshd[4000]: Failed password for carol from 198.51.100.7 port 50002 ssh2"
+          ]
+        },
+        {
+          "rule": "spray",
+          "title": "Password spraying (many accounts, one source)",
+          "stage": "Credential Access",
+          "mitre": "T1110.003",
+          "score": 60,
+          "ip": "198.51.100.7",
+          "user": null,
+          "host": "db01",
+          "start": 1791178400.0,
+          "end": 1791178574.0,
+          "count": 30,
+          "sources": [
+            "auth"
+          ],
+          "evidence": [
+            "2026-10-05T05:33:20 db01 sshd[4000]: Failed password for alice from 198.51.100.7 port 50000 ssh2",
+            "2026-10-05T05:33:26 db01 sshd[4000]: Failed password for bob from 198.51.100.7 port 50001 ssh2",
+            "2026-10-05T05:33:32 db01 sshd[4000]: Failed password for carol from 198.51.100.7 port 50002 ssh2"
+          ]
+        }
+      ],
+      "summary": "198.51.100.7 progressed through Credential Access across 1 log source(s): auth."
+    },
+    {
+      "id": "INC-003",
+      "ip": "192.0.2.99",
+      "start": 1791228400.0,
+      "end": 1791228460.0,
+      "score": 55,
+      "severity": "MEDIUM",
+      "stages": [
+        "Initial Access"
+      ],
+      "sources": [
+        "web"
+      ],
+      "users": [],
+      "hosts": [
+        "web"
+      ],
+      "alerts": [
+        {
+          "rule": "web_attack",
+          "title": "Web attack signatures (SQLi/traversal/XSS/scanner)",
+          "stage": "Initial Access",
+          "mitre": "T1190",
+          "score": 55,
+          "ip": "192.0.2.99",
+          "user": null,
+          "host": "web",
+          "start": 1791228400.0,
+          "end": 1791228460.0,
+          "count": 13,
+          "sources": [
+            "web"
+          ],
+          "evidence": [
+            "192.0.2.99 - - [05/Oct/2026:19:26:40 +0000] \"GET /search?q=1' OR 1=1-- HTTP/1.1\" 404 300 \"-\" \"sqlmap/1.7\"",
+            "192.0.2.99 - - [05/Oct/2026:19:26:48 +0000] \"GET /download?file=../../../../etc/passwd HTTP/1.1\" 404 300 \"-\" \"Mozilla/5.0 (X11; Linux x86_64) Chrome/120.0\"",
+            "192.0.2.99 - - [05/Oct/2026:19:26:52 +0000] \"GET /page?x=%3Cscript%3Ealert(1)%3C/script%3E HTTP/1.1\" 403 300 \"-\" \"sqlmap/1.7\""
+          ]
+        }
+      ],
+      "summary": "192.0.2.99 progressed through Initial Access across 1 log source(s): web."
+    }
+  ]
+}
